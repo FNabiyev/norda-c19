@@ -10,4 +10,11 @@ urlpatterns = [
     path('send-msg/', SendMsg),
     path('product/<int:pk>/', ProductDetail.as_view()),
     path('addtocart/<int:pk>/', AddToCart),
+    path('cart/', Cart),
+    path('deletecart/<int:id>/', DeleteCart),
+    path('count-savatcha/', CountSavatcha),
+
+    path('login/', Login),
+    path('logout/', Logout),
+    path('register/', Register),
 ]

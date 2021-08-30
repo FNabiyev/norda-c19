@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
+from django.http import JsonResponse
+
 
 class Categories(models.Model):
     name = models.CharField(max_length=100)
@@ -17,6 +20,7 @@ class Banners(models.Model):
     def __str__(self):
         return self.title
 
+
 class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
@@ -28,6 +32,7 @@ class Products(models.Model):
     def __str__(self):
         return self.name
 
+
 class Shop(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
@@ -37,6 +42,7 @@ class Shop(models.Model):
     def __str__(self):
         return str(self.id)
 
+
 class ShopItems(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -45,3 +51,24 @@ class ShopItems(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+def CountSavatcha(request):
+    count = ShopItems.objects.filter(shop__client=request.user, shop__status=0)
+    s = 0
+    for c in count:
+        s += c.total
+    data = {
+        'count': count.count(),
+        'total': s
+    }
+
+    return JsonResponse(data)
+
+
+class UserPhone(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=12)
+
+    def __str__(self):
+        return self.user.first_name
